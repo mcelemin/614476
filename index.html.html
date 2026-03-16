@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>All STARs League — Season 2026</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Russo+One&family=Inter:wght@400;600;700;900&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: linear-gradient(135deg, #001a3a 0%, #002d6b 40%, #0064f9 100%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    color: #ffffff;
+  }
+
+  .game-container {
+    width: 100%;
+    max-width: 800px;
+    min-height: 100vh;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .particles {
+    position: fixed; top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none; z-index: 0;
+  }
+  .particle {
+    position: absolute;
+    background: rgba(255,255,255,0.1);
+    border-radius: 50%;
+    animation: floatUp linear infinite;
+  }
+  @keyframes floatUp {
+    0% { transform: translateY(100vh) scale(0); opacity: 0; }
+    10% { opacity: 1; } 90% { opacity: 1; }
+    100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+  }
+
+  .screen {
+    display: none; flex-direction: column;
+    align-items: center; justify-content: center;
+    text-align: center; width: 100%;
+    z-index: 10; animation: fadeIn 0.5s ease;
+  }
+  .screen.active { display: flex; }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .logo-badge {
+    width: 120px; height: 120px;
+    background: linear-gradient(135deg, #0578ff, #0064f9);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 20px;
+    box-shadow: 0 0 40px rgba(5,120,255,0.5), inset 0 0 30px rgba(255,255,255,0.1);
+    border: 3px solid rgba(255,255,255,0.3);
+    font-size: 40px;
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); box-shadow: 0 0 40px rgba(5,120,255,0.5); }
+    50% { transform: scale(1.05); box-shadow: 0 0 60px rgba(5,120,255,0.8); }
+  }
+
+  .title {
+    font-family: 'Russo One', sans-serif;
+    font-size: 2.2em; letter-spacing: 2px;
+    margin-bottom: 5px;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+  }
+  .subtitle {
+    font-size: 1em; opacity: 0.8;
+    margin-bottom: 30px; font-weight: 600;
+  }
+
+  .input-group {
+    margin-bottom: 15px; width: 100%; max-width: 350px;
+  }
+  .input-group label {
+    display: block; font-size: 0.85em; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 1px;
+    margin-bottom: 6px; opacity: 0.9;
+  }
+  .input-group input {
+    width: 100%; padding: 14px 18px;
+    border: 2px solid rgba(255,255,255,0.2);
+    border-radius: 12px;
+    background: rgba(255,255,255,0.1);
+    color: #fff; font-size: 1em;
+    font-family: 'Inter', sans-serif;
+    backdrop-filter: blur(10px); transition: all 0.3s;
+  }
+  .input-group input::placeholder { color: rgba(255,255,255,0.4); }
+  .input-group input:focus {
+    outline: none; border-color: #0578ff;
+    background: rgba(255,255,255,0.15);
+    box-shadow: 0 0 20px rgba(5,120,255,0.3);
+  }
+
+  .btn {
+    padding: 16px 50px; border: none; border-radius: 50px;
+    font-family: 'Russo One', sans-serif; font-size: 1.2em;
+    letter-spacing: 2px; cursor: pointer;
+    transition: all 0.3s; margin-top: 15px; text-transform: uppercase;
+    text-decoration: none; display: inline-block; text-align: center;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, #0578ff, #0064f9);
+    color: white; box-shadow: 0 4px 20px rgba(5,120,255,0.4);
+  }
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 30px rgba(5,120,255,0.6);
+  }
+  .btn-primary:disabled {
+    opacity: 0.4; cursor: not-allowed; transform: none;
+  }
+  .btn-green {
+    background: linear-gradient(135deg, #00cc66, #00aa55);
+    color: white; box-shadow: 0 4px 20px rgba(0,204,102,0.4);
+    font-size: 1em; padding: 14px 40px;
+  }
+  .btn-green:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 30px rgba(0,204,102,0.6);
+  }
+  .btn-copy {
+    background: linear-gradient(135deg, #ff8800, #ff6600);
+    color: white; box-shadow: 0 4px 20px rgba(255,136,0,0.4);
+    font-size: 0.85em; padding: 12px 30px;
+  }
+
+  .error-msg {
+    background: rgba(255,68,68,0.2);
+    border: 1px solid rgba(255,68,68,0.4);
+    color: #ff8888; padding: 12px 20px;
+    border-radius: 12px; margin-top: 15px;
+    font-size: 0.9em; display: none;
+    max-width: 350px; line-height: 1.4;
+  }
+  .error-msg.visible { display: block; }
+
+  .scoreboard {
+    width: 100%; max-width: 500px;
+    background: rgba(0,0,0,0.3); border-radius: 16px;
+    padding: 15px 20px; margin-bottom: 20px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+  .scoreboard-top {
+    display: flex; align-items: center;
+    justify-content: center; gap: 20px; margin-bottom: 8px;
+  }
+  .team-name {
+    font-size: 0.85em; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 1px; width: 120px;
+  }
+  .team-name.left { text-align: right; }
+  .team-name.right { text-align: left; }
+  .score-display {
+    font-family: 'Russo One', sans-serif; font-size: 2.5em;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .score-display .dash { opacity: 0.5; font-size: 0.6em; }
+  .score-num {
+    background: rgba(255,255,255,0.1); padding: 5px 15px;
+    border-radius: 8px; min-width: 55px;
+    text-align: center; transition: all 0.3s;
+  }
+  .score-num.flash { animation: scoreFlash 0.6s ease; }
+  @keyframes scoreFlash {
+    0% { background: rgba(255,255,255,0.1); transform: scale(1); }
+    50% { background: rgba(5,120,255,0.6); transform: scale(1.2); }
+    100% { background: rgba(255,255,255,0.1); transform: scale(1); }
+  }
+  .match-info {
+    font-size: 0.75em; opacity: 0.6;
+    text-transform: uppercase; letter-spacing: 2px;
+  }
+
+  .timer-bar-container {
+    width: 100%; max-width: 500px; height: 6px;
+    background: rgba(255,255,255,0.1); border-radius: 3px;
+    margin-bottom: 20px; overflow: hidden;
+  }
+  .timer-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #00ff88, #0578ff);
+    border-radius: 3px; transition: width 1s linear;
+  }
+  .timer-bar.warning { background: linear-gradient(90deg, #ff4444, #ff8800); }
+  .timer-text {
+    font-family: 'Russo One', sans-serif; font-size: 1.5em;
+    margin-bottom: 10px; opacity: 0.9;
+  }
+  .timer-text.warning { color: #ff4444; animation: blink 0.5s ease infinite; }
+  @keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
+
+  .question-label {
+    font-size: 0.8em; text-transform: uppercase;
+    letter-spacing: 3px; opacity: 0.6; margin-bottom: 10px;
+  }
+  .question-text {
+    font-size: 1.15em; font-weight: 700; line-height: 1.5;
+    margin-bottom: 25px; max-width: 600px; padding: 0 10px;
+  }
+  .options {
+    width: 100%; max-width: 600px;
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .option-btn {
+    width: 100%; padding: 16px 20px;
+    border: 2px solid rgba(255,255,255,0.15);
+    border-radius: 14px; background: rgba(255,255,255,0.05);
+    color: #fff; font-size: 0.95em;
+    font-family: 'Inter', sans-serif; font-weight: 600;
+    cursor: pointer; transition: all 0.3s;
+    text-align: left; backdrop-filter: blur(5px); line-height: 1.4;
+  }
+  .option-btn:hover:not(:disabled) {
+    border-color: #0578ff;
+    background: rgba(5,120,255,0.15);
+    transform: translateX(5px);
+  }
+  .option-btn.correct {
+    border-color: #00ff88 !important;
+    background: rgba(0,255,136,0.2) !important;
+    animation: correctPulse 0.5s ease;
+  }
+  .option-btn.incorrect {
+    border-color: #ff4444 !important;
+    background: rgba(255,68,68,0.2) !important;
+  }
+  @keyframes correctPulse {
+    0%{transform:scale(1);} 50%{transform:scale(1.02);} 100%{transform:scale(1);}
+  }
+
+  .feedback-overlay {
+    display: none; position: fixed; top: 0; left: 0;
+    width: 100%; height: 100%; z-index: 100;
+    flex-direction: column; align-items: center;
+    justify-content: center; animation: fadeIn 0.3s ease;
+  }
+  .feedback-overlay.active { display: flex; }
+  .feedback-overlay.goal-for {
+    background: radial-gradient(ellipse at center, rgba(0,180,80,0.95) 0%, rgba(0,100,40,0.98) 100%);
+  }
+  .feedback-overlay.goal-against {
+    background: radial-gradient(ellipse at center, rgba(200,30,30,0.95) 0%, rgba(100,10,10,0.98) 100%);
+  }
+  .feedback-icon {
+    font-size: 80px; margin-bottom: 15px;
+    animation: bounceIn 0.5s ease;
+  }
+  @keyframes bounceIn {
+    0%{transform:scale(0) rotate(-10deg);}
+    60%{transform:scale(1.2) rotate(5deg);}
+    100%{transform:scale(1) rotate(0);}
+  }
+  .feedback-title {
+    font-family: 'Russo One', sans-serif; font-size: 2.5em;
+    letter-spacing: 3px; margin-bottom: 10px;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+  }
+  .feedback-explanation {
+    font-size: 0.9em; max-width: 550px; line-height: 1.6;
+    opacity: 0.95; padding: 15px 25px;
+    background: rgba(0,0,0,0.2); border-radius: 12px;
+    margin-top: 10px; text-align: left;
+  }
+
+  .halftime-badge {
+    font-family: 'Russo One', sans-serif; font-size: 1.2em;
+    letter-spacing: 3px; text-transform: uppercase;
+    background: rgba(255,255,255,0.1); padding: 8px 25px;
+    border-radius: 30px; margin-bottom: 20px;
+    border: 1px solid rgba(255,255,255,0.2);
+  }
+  .halftime-score {
+    font-family: 'Russo One', sans-serif; font-size: 4em;
+    margin: 20px 0; text-shadow: 0 0 30px rgba(5,120,255,0.5);
+  }
+  .halftime-msg {
+    font-size: 1em; opacity: 0.8;
+    margin-bottom: 25px; line-height: 1.5;
+  }
+
+  .penalty-intro { animation: shakeIt 0.5s ease; }
+  @keyframes shakeIt {
+    0%,100%{transform:translateX(0);}
+    20%{transform:translateX(-10px);}
+    40%{transform:translateX(10px);}
+    60%{transform:translateX(-5px);}
+    80%{transform:translateX(5px);}
+  }
+
+  .final-result-box {
+    background: rgba(0,0,0,0.3); border-radius: 20px;
+    padding: 30px 40px; backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.15);
+    margin: 20px 0; min-width: 320px;
+  }
+  .final-score {
+    font-family: 'Russo One', sans-serif; font-size: 3.5em;
+    margin: 10px 0; text-shadow: 0 0 30px rgba(5,120,255,0.5);
+  }
+  .final-label {
+    font-size: 0.8em; text-transform: uppercase;
+    letter-spacing: 2px; opacity: 0.6;
+  }
+  .final-status {
+    font-family: 'Russo One', sans-serif; font-size: 1.8em;
+    margin-top: 15px; letter-spacing: 2px;
+  }
+  .final-status.win { color: #00ff88; }
+  .final-status.lose { color: #ff4444; }
+  .final-status.draw { color: #ffaa00; }
+
+  .submit-section {
+    margin-top: 20px; padding: 20px 25px;
+    background: rgba(0,255,136,0.1); border-radius: 16px;
+    border: 1px solid rgba(0,255,136,0.2);
+    max-width: 500px; width: 100%;
+  }
+  .submit-section p {
+    margin-bottom: 12px; line-height: 1.5; font-size: 0.95em;
+  }
+  .submit-buttons {
+    display: flex; flex-direction: column;
+    align-items: center; gap: 10px;
+  }
+  .or-divider {
+    font-size: 0.8em; opacity: 0.5;
+    text-transform: uppercase; letter-spacing: 2px;
+  }
+  .copy-success {
+    display: none; margin-top: 8px;
+    color: #00ff88; font-size: 0.85em;
+    animation: fadeIn 0.3s ease;
+  }
+  .copy-success.visible { display: block; }
+
+  .league-impact-msg {
+    margin-top: 12px; padding: 12px 25px;
+    background: rgba(255,170,0,0.15); border-radius: 12px;
+    border: 1px solid rgba(255,170,0,0.3);
+    font-size: 0.9em; line-height: 1.5; color: #ffdd66;
+    max-width: 500px;
+  }
+
+  .already-played-box {
+    background: rgba(255,170,0,0.15);
+    border: 1px solid rgba(255,170,0,0.3);
+    border-radius: 20px; padding: 30px 40px;
+    max-width: 450px; margin-top: 20px;
+  }
+
+  .confetti-container {
+    position: fixed; top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none; z-index: 200;
+  }
+  .confetti-piece {
+    position: absolute; top: -20px;
+    animation: confettiFall linear forwards;
+  }
+  @keyframes confettiFall {
+    0%{transform:translateY(-20px) rotate(0deg); opacity:1;}
+    100%{transform:translateY(100vh) rotate(720deg); opacity:0;}
+  }
+
+  @media (max-width: 600px) {
+    .title { font-size: 1.5em; }
+    .question-text { font-size: 1em; }
+    .score-display { font-size: 2em; }
+    .feedback-title { font-size: 1.8em; }
+    .final-score { font-size: 2.5em; }
+    .halftime-score { font-size: 3em; }
+    .option-btn { padding: 14px 16px; font-size: 0.88em; }
+    .final-result-box { padding: 20px 25px; min-width: auto; width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<div class="particles" id="particles"></div>
+
+<div class="game-container">
+
+  <!-- START -->
+  <div class="screen active" id="screen-start">
+    <div class="logo-badge">⚽</div>
+    <div class="title">ALL STARs LEAGUE</div>
+    <div class="subtitle">Season 2026 — Launch Activities</div>
+    <div class="input-group">
+      <label>Your Login</label>
+      <input type="text" id="playerName" placeholder="Enter your login..." maxlength="30">
+    </div>
+    <div class="input-group">
+      <label>Your Site</label>
+      <input type="text" id="playerSite" placeholder="Enter your site..." maxlength="30">
+    </div>
+    <button class="btn btn-primary" id="btnKickoff" onclick="startGame()">⚽ KICK OFF</button>
+    <div class="error-msg" id="errorMsg"></div>
+  </div>
+
+  <!-- ALREADY PLAYED -->
+  <div class="screen" id="screen-already-played">
+    <div class="logo-badge">🚫</div>
+    <div class="title">ALREADY PLAYED!</div>
+    <div class="already-played-box">
+      <p style="font-size:1.1em; margin-bottom:15px;">You have already completed this quiz on this device.</p>
+      <p style="opacity:0.8;">Each player can only participate once to keep the competition fair.</p>
+      <p style="margin-top:15px; opacity:0.8;">If you think this is an error, contact <strong>mcelemin@</strong></p>
+    </div>
+  </div>
+
+  <!-- INTRO HALF -->
+  <div class="screen" id="screen-half-intro">
+    <div class="feedback-icon" id="halfIntroIcon">⚽</div>
+    <div class="title" id="halfIntroTitle">FIRST HALF</div>
+    <div class="subtitle" id="halfIntroSub">3 questions — every correct answer is a GOAL!</div>
+  </div>
+
+  <!-- QUESTION -->
+  <div class="screen" id="screen-question">
+    <div class="scoreboard">
+      <div class="scoreboard-top">
+        <div class="team-name left" id="teamYouLabel">YOU</div>
+        <div class="score-display">
+          <span class="score-num" id="scoreYou">0</span>
+          <span class="dash">—</span>
+          <span class="score-num" id="scoreRival">0</span>
+        </div>
+        <div class="team-name right">RIVAL</div>
+      </div>
+      <div class="match-info" id="matchInfo">FIRST HALF</div>
+    </div>
+    <div class="timer-text" id="timerText">30</div>
+    <div class="timer-bar-container">
+      <div class="timer-bar" id="timerBar" style="width:100%"></div>
+    </div>
+    <div class="question-label" id="questionLabel"></div>
+    <div class="question-text" id="questionText"></div>
+    <div class="options" id="optionsContainer"></div>
+  </div>
+
+  <!-- HALFTIME -->
+  <div class="screen" id="screen-halftime">
+    <div class="halftime-badge">⏱️ HALF TIME</div>
+    <div class="title">END OF FIRST HALF</div>
+    <div class="halftime-score" id="halftimeScore">0 — 0</div>
+    <div class="halftime-msg" id="halftimeMsg"></div>
+    <button class="btn btn-primary" onclick="startSecondHalf()">▶ SECOND HALF</button>
+  </div>
+
+  <!-- PENALTY INTRO -->
+  <div class="screen" id="screen-penalty-intro">
+    <div class="penalty-intro">
+      <div class="feedback-icon">🥅</div>
+      <div class="title">PENALTY SHOOTOUT!</div>
+      <div class="subtitle">It's a draw! One final question decides it all...</div>
+    </div>
+    <button class="btn btn-primary" onclick="startPenalty()" style="margin-top:20px;">⚽ TAKE THE PENALTY</button>
+  </div>
+
+  <!-- FINAL -->
+  <div class="screen" id="screen-final">
+    <div class="feedback-icon" id="finalIcon">🏆</div>
+    <div class="final-result-box">
+      <div class="final-label">FULL TIME</div>
+      <div class="final-score" id="finalScore">0 — 0</div>
+      <div class="final-label" id="finalPlayerInfo"></div>
+      <div class="final-status" id="finalStatus"></div>
+    </div>
+    <div class="submit-section">
+      <p>📋 <strong>Submit your result to make it count!</strong></p>
+      <div class="submit-buttons">
+        <a id="emailBtn" class="btn btn-green" href="#">📩 SEND VIA EMAIL</a>
+        <div class="or-divider">— or —</div>
+        <button id="copyBtn" class="btn btn-copy" onclick="copyResult()">📋 COPY RESULT</button>
+        <div class="copy-success" id="copySuccess">✅ Copied! Now paste send it to mcelemin@ via Slack</div>
+      </div>
+    </div>
+    <div class="league-impact-msg">
+      🏆 <strong>These points impact your site's position in the League Table!</strong> Every goal counts — make sure you submit!
+    </div>
+  </div>
+
+</div>
+
+<!-- FEEDBACK OVERLAY -->
+<div class="feedback-overlay" id="feedbackOverlay">
+  <div class="feedback-icon" id="feedbackIcon"></div>
+  <div class="feedback-title" id="feedbackTitle"></div>
+  <div class="feedback-explanation" id="feedbackExplanation"></div>
+</div>
+
+<div class="confetti-container" id="confettiContainer"></div>
+
+<script>
+// =============================================
+// 👇 YOUR EMAIL — change this 👇
+// =============================================
+const YOUR_EMAIL = 'mcelemin@amazon.es';
+
+const questions = [
+  {
+    text: "What is the correct definition of the Back to Basics (B2B) initiative?",
+    options: [
+      "A program where sites self-assess compliance against standards",
+      "A network-wide program where senior leaders assess operational readiness",
+      "Action plans developed and managed to drive productivity improvements at a process path level",
+      "A benchmarking tool used by senior operations leaders"
+    ],
+    correct: 2,
+    explanation: "Back to Basics is all about building and managing action plans that drive real productivity improvements — at the process path level. It gives operational leads a structured way to identify where performance can improve and take direct, targeted action. It's the foundation of everything we do on the floor!"
+  },
+  {
+    text: "A site is underperforming on a process path. According to the B2B framework, what should an operational lead focus on first?",
+    options: [
+      "Escalating immediately to senior leadership",
+      "Waiting for the next audit cycle to take action",
+      "Replacing the process path with a new one",
+      "Reviewing input metrics to identify what's driving the gap"
+    ],
+    correct: 3,
+    explanation: "The B2B approach starts with understanding why performance is off — and that means looking at the input metrics first. Once you know what's driving the gap, you can build a targeted action plan and track progress back to target. It's disciplined, structured, and built for leads who want to make a real impact!"
+  },
+  {
+    text: "Your team is looking for the official standard on how to run a specific process. Where should they go first?",
+    options: [
+      "The All STARs Wiki",
+      "Policy 2.0",
+      "ATLAS Checklists",
+      "ATS Ops Academy"
+    ],
+    correct: 1,
+    explanation: "Policy 2.0 is the single source of truth for all process standards — one unified hub that removes information silos and gives everyone access to the same playbook. No more hunting across different platforms or asking around. If it's the official standard, it lives in Policy 2.0!"
+  },
+  {
+    text: "How many categories do sites compete in during the All STARs league, and which of the following correctly lists them all?",
+    options: [
+      "3 categories — AR, Manual/AMXL, and Auto",
+      "5 categories — AR, Manual, AMXL, MHE, and Auto",
+      "4 categories — AR, Manual/AMXL, MHE, and Auto",
+      "4 categories — AR, Manual, MHE, and Auto"
+    ],
+    correct: 2,
+    explanation: "Sites compete across 4 categories — AR, Manual/AMXL, MHE, and Auto — ensuring every site is compared fairly against others with a similar operational profile. Know your league table!"
+  },
+  {
+    text: "What is Amazon Quick Suite?",
+    options: [
+      "A scheduling tool for shift planning",
+      "A reporting system exclusively for L7+ leaders",
+      "A physical device for scanning packages on the floor",
+      "An enterprise AI platform offering AI-powered search, custom agents, automations, and business intelligence"
+    ],
+    correct: 3,
+    explanation: "Amazon Quick Suite is your team's AI-powered command center! It lets you search across company data, build custom agents for specialized tasks, automate repetitive workflows with Quick Flows, and generate deep insights through dashboards and Quick Research. It's the tech that turns your data into decisions — fast."
+  },
+  {
+    text: "Which Amazon Quick Suite feature would be MOST useful for organizing and sharing SOPs, training files, and process documents?",
+    options: [
+      "Datasets",
+      "Quick Research",
+      "Spaces",
+      "Quick Flows"
+    ],
+    correct: 2,
+    explanation: "Spaces are designed exactly for this — they let you create a curated collection of files, dashboards, topics, and knowledge bases that your team can access in one place. Think of it as your team's digital locker room — everything you need, right where you need it!"
+  },
+  {
+    text: "An operational lead wants to automate a repetitive weekly task. Which Amazon Quick Suite feature is best suited for this?",
+    options: [
+      "Spaces",
+      "Quick Flows",
+      "Quick Research",
+      "Custom Agents"
+    ],
+    correct: 1,
+    explanation: "Quick Flows are built for exactly this — automating repetitive, multi-step tasks so you don't have to do them manually every time. Set it up once, and it runs on its own. Less admin, more time on the floor where it counts. Work smarter, not harder! 🚀"
+  }
+];
+
+let playerName = "";
+let playerSite = "";
+let scoreYou = 0;
+let scoreRival = 0;
+let currentQuestion = 0;
+let timerInterval = null;
+let timeLeft = 30;
+let gamePhase = "first";
+let answered = false;
+
+// PARTICLES
+(function() {
+  const c = document.getElementById('particles');
+  for (let i = 0; i < 20; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.style.left = Math.random()*100+'%';
+    p.style.width = p.style.height = (Math.random()*6+2)+'px';
+    p.style.animationDuration = (Math.random()*15+10)+'s';
+    p.style.animationDelay = (Math.random()*10)+'s';
+    c.appendChild(p);
+  }
+})();
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const s = document.getElementById(id);
+  void s.offsetWidth;
+  s.classList.add('active');
+}
+
+function showError(msg) {
+  const el = document.getElementById('errorMsg');
+  el.textContent = msg; el.classList.add('visible');
+}
+
+// ========== EMAIL & COPY ==========
+function buildResultText() {
+  const result = scoreYou > scoreRival ? 'WIN' : scoreYou < scoreRival ? 'LOSS' : 'DRAW';
+  const pen = gamePhase === "penalty" ? " (PEN)" : "";
+  return `⚽ ALL STARs QUIZ RESULT\n\nLogin: ${playerName}\nSite: ${playerSite}\nScore: ${scoreYou} - ${scoreRival}${pen}\nResult: ${result}\nDate: ${new Date().toLocaleString()}`;
+}
+
+function buildMailtoLink() {
+  const result = scoreYou > scoreRival ? 'WIN' : scoreYou < scoreRival ? 'LOSS' : 'DRAW';
+  const emoji = result === 'WIN' ? '🏆' : result === 'LOSS' ? '😔' : '🤝';
+  const pen = gamePhase === "penalty" ? " (PEN)" : "";
+  const subject = encodeURIComponent(`⚽ All STARs Quiz — ${playerName} (${playerSite}) — ${scoreYou}-${scoreRival} ${emoji}`);
+  const body = encodeURIComponent(buildResultText());
+  return `mailto:${YOUR_EMAIL}?subject=${subject}&body=${body}`;
+}
+
+function copyResult() {
+  const text = buildResultText();
+  navigator.clipboard.writeText(text).then(() => {
+    document.getElementById('copySuccess').classList.add('visible');
+    document.getElementById('copyBtn').textContent = '✅ COPIED!';
+  }).catch(() => {
+    // Fallback for older browsers
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    document.getElementById('copySuccess').classList.add('visible');
+    document.getElementById('copyBtn').textContent = '✅ COPIED!';
+  });
+}
+
+// ========== START ==========
+function startGame() {
+  if (localStorage.getItem('allstars_played')) {
+    showScreen('screen-already-played');
+    return;
+  }
+  playerName = document.getElementById('playerName').value.trim();
+  playerSite = document.getElementById('playerSite').value.trim();
+  if (!playerName || !playerSite) { showError("Please enter your login and site!"); return; }
+
+  localStorage.setItem('allstars_played', 'true');
+  localStorage.setItem('allstars_login', playerName);
+
+  document.getElementById('teamYouLabel').textContent = playerSite.toUpperCase();
+  showScreen('screen-half-intro');
+  document.getElementById('halfIntroIcon').textContent = '⚽';
+  document.getElementById('halfIntroTitle').textContent = 'FIRST HALF';
+  document.getElementById('halfIntroSub').textContent = '3 questions — every correct answer is a GOAL!';
+  setTimeout(() => { currentQuestion = 0; gamePhase = "first"; loadQuestion(); }, 2500);
+}
+
+// Block if already played
+if (localStorage.getItem('allstars_played')) {
+  document.getElementById('btnKickoff').disabled = true;
+  document.getElementById('btnKickoff').textContent = '🚫 ALREADY PLAYED';
+  document.getElementById('playerName').disabled = true;
+  document.getElementById('playerSite').disabled = true;
+  document.getElementById('playerName').placeholder = 'You already played';
+  document.getElementById('playerSite').placeholder = 'You already played';
+}
+
+// ========== QUESTION ==========
+function loadQuestion() {
+  showScreen('screen-question');
+  answered = false;
+  const q = questions[currentQuestion];
+  let label, info;
+  if (gamePhase==="first") { label=`QUESTION ${currentQuestion+1} OF 3`; info="⚽ FIRST HALF"; }
+  else if (gamePhase==="second") { label=`QUESTION ${currentQuestion-2} OF 3`; info="⚽ SECOND HALF"; }
+  else { label="⚽ PENALTY KICK"; info="🥅 PENALTY SHOOTOUT"; }
+
+  document.getElementById('questionLabel').textContent = label;
+  document.getElementById('matchInfo').textContent = info;
+  document.getElementById('questionText').textContent = q.text;
+  document.getElementById('scoreYou').textContent = scoreYou;
+  document.getElementById('scoreRival').textContent = scoreRival;
+
+  const container = document.getElementById('optionsContainer');
+  container.innerHTML = '';
+  let idx = q.options.map((_,i)=>i);
+  for (let i=idx.length-1;i>0;i--) { const j=Math.floor(Math.random()*(i+1)); [idx[i],idx[j]]=[idx[j],idx[i]]; }
+  idx.forEach(i => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.textContent = q.options[i];
+    btn.dataset.index = i;
+    btn.onclick = () => selectAnswer(i, btn);
+    container.appendChild(btn);
+  });
+  startTimer();
+}
+
+function startTimer() {
+  timeLeft = 30; updateTimerDisplay();
+  const bar = document.getElementById('timerBar');
+  const text = document.getElementById('timerText');
+  bar.style.width='100%'; bar.classList.remove('warning'); text.classList.remove('warning');
+  timerInterval = setInterval(() => {
+    timeLeft--; updateTimerDisplay();
+    if (timeLeft<=10) { bar.classList.add('warning'); text.classList.add('warning'); }
+    if (timeLeft<=0) { clearInterval(timerInterval); if (!answered) timeUp(); }
+  }, 1000);
+}
+
+function updateTimerDisplay() {
+  document.getElementById('timerText').textContent = timeLeft;
+  document.getElementById('timerBar').style.width = ((timeLeft/30)*100)+'%';
+}
+
+function timeUp() {
+  answered = true;
+  const q = questions[currentQuestion];
+  document.querySelectorAll('.option-btn').forEach(b => {
+    b.disabled = true;
+    if (parseInt(b.dataset.index)===q.correct) b.classList.add('correct');
+  });
+  scoreRival++; flashScore('scoreRival');
+  showFeedback(false, "⏱️ TIME'S UP!", q.explanation);
+}
+
+function selectAnswer(index, btn) {
+  if (answered) return;
+  answered = true; clearInterval(timerInterval);
+  const q = questions[currentQuestion];
+  const ok = index===q.correct;
+  document.querySelectorAll('.option-btn').forEach(b => {
+    b.disabled = true;
+    if (parseInt(b.dataset.index)===q.correct) b.classList.add('correct');
+    if (b===btn && !ok) b.classList.add('incorrect');
+  });
+  if (ok) { scoreYou++; flashScore('scoreYou'); showFeedback(true,"⚽ GOOOAL!",q.explanation); }
+  else { scoreRival++; flashScore('scoreRival'); showFeedback(false,"❌ GOAL AGAINST!",q.explanation); }
+}
+
+function flashScore(id) {
+  const el = document.getElementById(id);
+  el.textContent = id==='scoreYou' ? scoreYou : scoreRival;
+  el.classList.add('flash');
+  setTimeout(()=>el.classList.remove('flash'),600);
+}
+
+function showFeedback(isGoal, title, explanation) {
+  const o = document.getElementById('feedbackOverlay');
+  o.className = 'feedback-overlay active '+(isGoal?'goal-for':'goal-against');
+  document.getElementById('feedbackIcon').textContent = isGoal?'⚽':'😞';
+  document.getElementById('feedbackTitle').textContent = title;
+  document.getElementById('feedbackExplanation').textContent = explanation;
+  setTimeout(()=>{ o.classList.remove('active'); nextStep(); }, 4500);
+}
+
+function nextStep() {
+  currentQuestion++;
+  if (gamePhase==="first" && currentQuestion===3) showHalftime();
+  else if (gamePhase==="second" && currentQuestion===6) checkEnd();
+  else if (gamePhase==="penalty") showFinalScreen();
+  else loadQuestion();
+}
+
+function showHalftime() {
+  showScreen('screen-halftime');
+  document.getElementById('halftimeScore').textContent = `${scoreYou} — ${scoreRival}`;
+  let m;
+  if (scoreYou>scoreRival) m="You're in the lead! Keep it up! 💪";
+  else if (scoreYou<scoreRival) m="You're behind, but everything can change! 🔥";
+  else m="It's all level! Second half decides everything! ⚡";
+  document.getElementById('halftimeMsg').textContent = m;
+}
+
+function startSecondHalf() {
+  gamePhase = "second";
+  showScreen('screen-half-intro');
+  document.getElementById('halfIntroIcon').textContent = '🔥';
+  document.getElementById('halfIntroTitle').textContent = 'SECOND HALF';
+  document.getElementById('halfIntroSub').textContent = '3 more questions — finish strong!';
+  setTimeout(()=>loadQuestion(), 2500);
+}
+
+function checkEnd() {
+  if (scoreYou===scoreRival) showScreen('screen-penalty-intro');
+  else showFinalScreen();
+}
+
+function startPenalty() { gamePhase="penalty"; currentQuestion=6; loadQuestion(); }
+
+function showFinalScreen() {
+  showScreen('screen-final');
+  const pen = gamePhase==="penalty" ? " (PEN)" : "";
+  document.getElementById('finalScore').textContent = `${scoreYou} — ${scoreRival}${pen}`;
+  document.getElementById('finalPlayerInfo').textContent = `${playerName} • ${playerSite}`;
+
+  // Set email link
+  document.getElementById('emailBtn').href = buildMailtoLink();
+
+  const s = document.getElementById('finalStatus');
+  const ic = document.getElementById('finalIcon');
+  if (scoreYou>scoreRival) { s.textContent="🏆 VICTORY!"; s.className="final-status win"; ic.textContent="🏆"; launchConfetti(); }
+  else if (scoreYou<scoreRival) { s.textContent="DEFEAT"; s.className="final-status lose"; ic.textContent="😔"; }
+  else { s.textContent="DRAW"; s.className="final-status draw"; ic.textContent="🤝"; }
+}
+
+function launchConfetti() {
+  const c = document.getElementById('confettiContainer');
+  const cols = ['#0578ff','#0064f9','#00ff88','#ffaa00','#ff4444','#ffffff','#ff66cc'];
+  for (let i=0;i<80;i++) {
+    const p = document.createElement('div');
+    p.className='confetti-piece';
+    p.style.left=Math.random()*100+'%';
+    p.style.backgroundColor=cols[Math.floor(Math.random()*cols.length)];
+    p.style.width=(Math.random()*10+5)+'px';
+    p.style.height=(Math.random()*10+5)+'px';
+    p.style.borderRadius=Math.random()>0.5?'50%':'2px';
+    p.style.animationDuration=(Math.random()*2+2)+'s';
+    p.style.animationDelay=(Math.random()*1.5)+'s';
+    c.appendChild(p);
+  }
+  setTimeout(()=>c.innerHTML='',5000);
+}
+
+document.getElementById('playerName').addEventListener('input',chk);
+document.getElementById('playerSite').addEventListener('input',chk);
+function chk() {
+  const n=document.getElementById('playerName').value.trim();
+  const s=document.getElementById('playerSite').value.trim();
+  document.getElementById('btnKickoff').disabled=!(n&&s);
+}
+chk();
+</script>
+</body>
+</html>
